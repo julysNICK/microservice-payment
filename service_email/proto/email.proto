@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package service_email;
+
+option go_package = "service_email/pb";
+
+
+message Email {
+    string from = 1;
+    string to = 2;
+    string subject = 3;
+    string body = 4;
+    string html = 5;
+    repeated Attachment attachments = 6;
+}
+
+message Attachment {
+    string name = 1;
+    string content = 2;
+    string contentType = 3;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package service_email;
+
+
+import "rpc_send_email.proto";
+
+option go_package = "service_email/pb";
+
+service EmailService {
+    rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
+}
