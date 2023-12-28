@@ -1,0 +1,11 @@
+syntax="proto3";
+
+package service_auth;
+
+option go_package = "service_auth/pb";
+
+message User_Register {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
