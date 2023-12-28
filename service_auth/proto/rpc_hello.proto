@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service_auth;
+
+option go_package = "service_auth/pb";
+
+message hello_request {
+    string name = 1;
+}
+
+message hello_response {
+    string message = 1;
+}
+
+
