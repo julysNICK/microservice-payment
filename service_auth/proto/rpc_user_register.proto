@@ -8,6 +8,8 @@ message AuthRegisterRequest {
     string username = 1;
     string email = 2;
     string password = 3;
+    string cpf = 4;
+    string credit_card = 5;
 }
 
 message AuthRegisterResponse {
