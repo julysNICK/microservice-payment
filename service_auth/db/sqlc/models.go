@@ -20,6 +20,7 @@ type CreditCard struct {
 type User struct {
 	ID        int32
 	Email     string
+	Cpf       string
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
