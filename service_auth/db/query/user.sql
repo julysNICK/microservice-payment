@@ -1,5 +1,5 @@
 -- name: CreateUser :one
-INSERT INTO users (email, password, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id, email, password, created_at, updated_at;
+INSERT INTO users (email, cpf,password, created_at, updated_at) VALUES ($1, $2,  $3, $4, $5) RETURNING id, email, cpf,password, created_at, updated_at;
 
 -- name: GetUserByUsername :one
-SELECT id, password, email, created_at, updated_at FROM users WHERE email = $1 LIMIT 1;
+SELECT id, password, cpf, email, created_at, updated_at FROM users WHERE email = $1 LIMIT 1;

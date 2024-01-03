@@ -11,35 +11,30 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email, password, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id, email, password, created_at, updated_at
+INSERT INTO users (email, cpf,password, created_at, updated_at) VALUES ($1, $2,  $3, $4, $5) RETURNING id, email, cpf,password, created_at, updated_at
 `
 
 type CreateUserParams struct {
 	Email     string
+	Cpf       string
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-type CreateUserRow struct {
-	ID        int32
-	Email     string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Email,
+		arg.Cpf,
 		arg.Password,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)
-	var i CreateUserRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.Cpf,
 		&i.Password,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -48,12 +43,13 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, password, email, created_at, updated_at FROM users WHERE email = $1 LIMIT 1
+SELECT id, password, cpf, email, created_at, updated_at FROM users WHERE email = $1 LIMIT 1
 `
 
 type GetUserByUsernameRow struct {
 	ID        int32
 	Password  string
+	Cpf       string
 	Email     string
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -65,6 +61,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, email string) (GetUserB
 	err := row.Scan(
 		&i.ID,
 		&i.Password,
+		&i.Cpf,
 		&i.Email,
 		&i.CreatedAt,
 		&i.UpdatedAt,
