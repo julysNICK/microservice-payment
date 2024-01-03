@@ -1,21 +1,28 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net"
+	db "service_auth/db/sqlc"
 	"service_auth/gapi"
 	"service_auth/pb"
 	"service_auth/util/config"
 
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-func runGrpcServer(config config.Config) {
+type Config struct {
+	db *sql.DB
+}
+
+func runGrpcServer(config config.Config, store db.Store) {
 
 	fmt.Println("starting grpc server...")
 
-	server, err := gapi.NewServer(config)
+	server, err := gapi.NewServer(config, store)
 
 	if err != nil {
 		fmt.Println("failed to create server: ", err)
@@ -42,12 +49,42 @@ func runGrpcServer(config config.Config) {
 }
 
 func main() {
-	config, err := config.LoadConfig(".")
+	config, err := config.LoadConfig("../../")
 
 	if err != nil {
 		fmt.Println("failed to load config: ", err)
 	}
 
-	runGrpcServer(*config)
+	cnn, err := connectToDB(config.DSN)
+
+	if err != nil {
+		fmt.Println("failed to load config: ", err)
+	}
+
+	store := db.NewStore(cnn)
+
+	runGrpcServer(*config, *store)
 	fmt.Println("starting grpc server...")
+}
+
+func connectToDB(dns string) (*sql.DB, error) {
+
+	db, err := openDBConnection(dns)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
+func openDBConnection(dns string) (*sql.DB, error) {
+
+	conn, err := sql.Open("postgres", dns)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
 }
