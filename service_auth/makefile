@@ -3,6 +3,9 @@ DB_URL_EXAMPLE=postgres://root:password@localhost:5432/payment_db?sslmode=disabl
 network:
 	docker network create --driver bridge postgres_network
 
+clearnetwork:
+	docker network rm postgres_network
+
 postgres:
 	docker run --name postgres_payment --network postgres_network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=password -d postgres
 	
@@ -26,4 +29,4 @@ sqlcgen:
 
 
 
-.PHONY: proto postgres createdbpos clearforup network sqlcgen
+.PHONY: proto postgres createdbpos clearforup network sqlcgen clearnetwork
