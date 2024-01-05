@@ -2,7 +2,10 @@ package gapi
 
 import (
 	"context"
+	"fmt"
+	db "service_auth/db/sqlc"
 	"service_auth/pb"
+	"service_auth/util"
 	"service_auth/util/validations"
 
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -14,12 +17,24 @@ func (s *Server) RegisterUser(ctx context.Context, req *pb.AuthRegisterRequest) 
 
 	violations := validate(req)
 
+	cryptPassword := util.HashedPassword(req.Password)
+
 	if len(violations) > 0 {
 		return nil, invalidArgumentError(violations)
 	}
 
+	idUserSaved, err := s.store.CreateUserTx(ctx, db.UserTxParams{
+		Email:      req.Email,
+		Cpf:        req.Cpf,
+		Password:   cryptPassword,
+		CreditCard: req.CreditCard,
+	})
+
 	rsp := &pb.AuthRegisterResponse{
-		Message: "requisition name " + req.Username + " requisition password " + req.Password + " requisition email " + req.Email + " requisition cpf " + req.Cpf + " requisition credit number " + req.CreditCard,
+		Message: "requisition name " + string(idUserSaved) + " requisition password " + req.Password + " requisition email " + req.Email + " requisition cpf " + req.Cpf + " requisition credit number " + req.CreditCard,
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return rsp, nil
@@ -31,6 +46,7 @@ func validate(req *pb.AuthRegisterRequest) (violations []*errdetails.BadRequest_
 	validateNameBool := validations.ValidateName(req.Username)
 
 	if !validateCpfBool {
+
 		violations = append(violations, &errdetails.BadRequest_FieldViolation{
 			Field:       "cpf",
 			Description: "cpf invalid",
@@ -38,6 +54,7 @@ func validate(req *pb.AuthRegisterRequest) (violations []*errdetails.BadRequest_
 	}
 
 	if !validateCreditNumberBool {
+		fmt.Println("credit card invalid")
 		violations = append(violations, &errdetails.BadRequest_FieldViolation{
 			Field:       "credit_card",
 			Description: "credit card invalid",

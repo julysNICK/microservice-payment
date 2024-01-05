@@ -1,6 +1,8 @@
 package validations
 
-import "regexp"
+import (
+	"regexp"
+)
 
 func removeNonNumeric(s string) string {
 	reg, _ := regexp.Compile("[^0-9]+")
@@ -33,13 +35,11 @@ func calculateCPFCheckDigit(s string) int {
 }
 
 func IsValidCPF(cpf string) bool {
+
 	cpf = removeNonNumeric(cpf)
 
 	if len(cpf) != 11 || areAllDigitsEqual(cpf) {
-		return false
-	}
 
-	if areAllDigitsEqual(cpf) {
 		return false
 	}
 

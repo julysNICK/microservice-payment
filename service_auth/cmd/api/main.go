@@ -49,11 +49,13 @@ func runGrpcServer(config config.Config, store db.Store) {
 }
 
 func main() {
-	config, err := config.LoadConfig("../../")
+	config, err := config.LoadConfig(".")
 
 	if err != nil {
 		fmt.Println("failed to load config: ", err)
 	}
+
+	fmt.Println(config.DSN)
 
 	cnn, err := connectToDB(config.DSN)
 

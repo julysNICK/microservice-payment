@@ -1,5 +1,10 @@
 DB_URL_EXAMPLE=postgres://root:password@localhost:5432/payment_db?sslmode=disable
 
+
+clearall: clearforup clearnetwork
+
+createall: network postgres createdbpos
+
 network:
 	docker network create --driver bridge postgres_network
 
@@ -15,6 +20,9 @@ clearforup:
 	
 createdbpos:
 	docker exec -it postgres_payment createdb --username=root --owner=root payment_db
+
+initserver:
+	go run cmd/api/main.go
 	
 # dropdb:
 #     docker exec -it postgres_payment dropdb payment_db
@@ -29,4 +37,4 @@ sqlcgen:
 
 
 
-.PHONY: proto postgres createdbpos clearforup network sqlcgen clearnetwork
+.PHONY: proto postgres createdbpos clearforup network sqlcgen clearnetwork clearall createall initserver
