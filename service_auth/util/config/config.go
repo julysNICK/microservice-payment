@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/spf13/viper"
 )
 
@@ -11,13 +13,13 @@ type Config struct {
 	// MigrationUrl         string        `mapstructure:"MIGRATION_URL"`
 	// HTTPServerAddress    string        `mapstructure:"HTTP_SERVER_ADDRESS"`
 	// RedisAddress         string        `mapstructure:"REDIS_ADDRESS"`
-	GRPCServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
-	// TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
-	// AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
-	// RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
-	EmailSenderName     string `mapstructure:"EMAIL_SENDER_NAME"`
-	EmailSenderAddress  string `mapstructure:"EMAIL_SENDER_ADDRESS"`
-	EmailSenderPassword string `mapstructure:"EMAIL_SENDER_PASSWORD"`
+	GRPCServerAddress    string        `mapstructure:"GRPC_SERVER_ADDRESS"`
+	TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
+	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
+	EmailSenderName      string        `mapstructure:"EMAIL_SENDER_NAME"`
+	EmailSenderAddress   string        `mapstructure:"EMAIL_SENDER_ADDRESS"`
+	EmailSenderPassword  string        `mapstructure:"EMAIL_SENDER_PASSWORD"`
 }
 
 func LoadConfig(path string) (config *Config, err error) {

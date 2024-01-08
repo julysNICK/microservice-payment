@@ -8,6 +8,7 @@ import (
 	"service_auth/gapi"
 	"service_auth/pb"
 	"service_auth/util/config"
+	"service_auth/util/token"
 
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -18,11 +19,11 @@ type Config struct {
 	db *sql.DB
 }
 
-func runGrpcServer(config config.Config, store db.Store) {
+func runGrpcServer(config config.Config, store db.Store, token token.Maker) {
 
 	fmt.Println("starting grpc server...")
 
-	server, err := gapi.NewServer(config, store)
+	server, err := gapi.NewServer(config, store, token)
 
 	if err != nil {
 		fmt.Println("failed to create server: ", err)
@@ -65,7 +66,13 @@ func main() {
 
 	store := db.NewStore(cnn)
 
-	runGrpcServer(*config, *store)
+	token, err := token.NewJWTMaker(config.TokenSymmetricKey)
+
+	if err != nil {
+		fmt.Println("failed to load config: ", err)
+	}
+
+	runGrpcServer(*config, *store, token)
 	fmt.Println("starting grpc server...")
 }
 

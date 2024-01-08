@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service_auth;
+
+option go_package = "service_auth/pb";
+
+message token_request {
+  string token = 1;
+}
+
+message token_response {
+  bool valid = 1;
+  string error = 2;
+
+}

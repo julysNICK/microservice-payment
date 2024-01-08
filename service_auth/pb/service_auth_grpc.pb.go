@@ -25,6 +25,7 @@ type AuthServiceClient interface {
 	RegisterUser(ctx context.Context, in *AuthRegisterRequest, opts ...grpc.CallOption) (*AuthRegisterResponse, error)
 	Hello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloResponse, error)
 	LoginUser(ctx context.Context, in *AuthLoginRequest, opts ...grpc.CallOption) (*AuthLoginResponse, error)
+	TokenAuth(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenResponse, error)
 }
 
 type authServiceClient struct {
@@ -62,6 +63,15 @@ func (c *authServiceClient) LoginUser(ctx context.Context, in *AuthLoginRequest,
 	return out, nil
 }
 
+func (c *authServiceClient) TokenAuth(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+	out := new(TokenResponse)
+	err := c.cc.Invoke(ctx, "/service_auth.AuthService/tokenAuth", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type AuthServiceServer interface {
 	RegisterUser(context.Context, *AuthRegisterRequest) (*AuthRegisterResponse, error)
 	Hello(context.Context, *HelloRequest) (*HelloResponse, error)
 	LoginUser(context.Context, *AuthLoginRequest) (*AuthLoginResponse, error)
+	TokenAuth(context.Context, *TokenRequest) (*TokenResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedAuthServiceServer) Hello(context.Context, *HelloRequest) (*He
 }
 func (UnimplementedAuthServiceServer) LoginUser(context.Context, *AuthLoginRequest) (*AuthLoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
+}
+func (UnimplementedAuthServiceServer) TokenAuth(context.Context, *TokenRequest) (*TokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TokenAuth not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -152,6 +166,24 @@ func _AuthService_LoginUser_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_TokenAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).TokenAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service_auth.AuthService/tokenAuth",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).TokenAuth(ctx, req.(*TokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginUser",
 			Handler:    _AuthService_LoginUser_Handler,
+		},
+		{
+			MethodName: "tokenAuth",
+			Handler:    _AuthService_TokenAuth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

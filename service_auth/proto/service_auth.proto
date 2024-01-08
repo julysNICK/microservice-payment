@@ -5,6 +5,7 @@ package service_auth;
 import "rpc_user_register.proto";
 import "rpc_user_login.proto";
 import "rpc_hello.proto";
+import "token_rpc.proto";
 
 option go_package = "service_auth/pb";
 
@@ -12,4 +13,5 @@ service AuthService {
     rpc RegisterUser(AuthRegisterRequest) returns (AuthRegisterResponse) {}
     rpc Hello(hello_request) returns (hello_response) {}
     rpc LoginUser(AuthLoginRequest) returns (AuthLoginResponse) {}
+    rpc tokenAuth(token_request) returns (token_response) {}
 }
