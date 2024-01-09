@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package service_payment;
+
+option go_package = "service_payment/pb";
+
+
+
+message PaymentCreateRequest {
+    string user_id = 1;
+    string product_id = 2;
+    string store_name = 3;
+    string amount = 4;
+    string status = 5;
+}
+
+message PaymentCreateResponse {
+    string message = 1;
+}

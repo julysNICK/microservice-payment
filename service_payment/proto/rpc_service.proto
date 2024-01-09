@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service_payment;
+
+import "rpc_hello.proto";
+
+import "rpc_payment_information.proto";
+
+option go_package = "service_payment/pb";
+
+
+service PaymentService {
+    rpc Hello (HelloRequest) returns (HelloResponse) {}
+    rpc PaymentCreate (PaymentCreateRequest) returns (PaymentCreateResponse) {}
+}

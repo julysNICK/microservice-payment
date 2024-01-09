@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package service_payment;
+
+option go_package = "service_payment/pb";
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloResponse {
+    string message = 1;
+}

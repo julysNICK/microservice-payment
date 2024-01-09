@@ -1,0 +1,11 @@
+CREATE TABLE purchase (
+  purchase_id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  product_id INTEGER NOT NULL,
+  store_name VARCHAR(255) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  status VARCHAR(255) NOT NULL,
+  purchase_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
