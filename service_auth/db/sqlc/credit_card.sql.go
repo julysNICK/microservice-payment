@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -42,20 +43,91 @@ func (q *Queries) CreateCreditCard(ctx context.Context, arg CreateCreditCardPara
 	return i, err
 }
 
-const getCreditCardByUserID = `-- name: GetCreditCardByUserID :one
+const getCreditCardByID = `-- name: GetCreditCardByID :many
+SELECT id, user_id, number, balance, created_at, updated_at FROM credit_card WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetCreditCardByID(ctx context.Context, id int32) ([]CreditCard, error) {
+	rows, err := q.db.QueryContext(ctx, getCreditCardByID, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CreditCard
+	for rows.Next() {
+		var i CreditCard
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Number,
+			&i.Balance,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCreditCardByUserID = `-- name: GetCreditCardByUserID :many
 SELECT id, user_id, number, balance, created_at, updated_at FROM credit_card WHERE user_id = $1 LIMIT 1
 `
 
-func (q *Queries) GetCreditCardByUserID(ctx context.Context, userID int32) (CreditCard, error) {
-	row := q.db.QueryRowContext(ctx, getCreditCardByUserID, userID)
-	var i CreditCard
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.Number,
-		&i.Balance,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+func (q *Queries) GetCreditCardByUserID(ctx context.Context, userID int32) ([]CreditCard, error) {
+	rows, err := q.db.QueryContext(ctx, getCreditCardByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CreditCard
+	for rows.Next() {
+		var i CreditCard
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Number,
+			&i.Balance,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateCreditCardPartial = `-- name: UpdateCreditCardPartial :exec
+UPDATE credit_card SET number = COALESCE($2, number), balance = COALESCE($3, balance), updated_at = COALESCE($4, updated_at) WHERE id = $1
+`
+
+type UpdateCreditCardPartialParams struct {
+	ID        int32
+	Number    sql.NullString
+	Balance   sql.NullInt32
+	UpdatedAt sql.NullTime
+}
+
+func (q *Queries) UpdateCreditCardPartial(ctx context.Context, arg UpdateCreditCardPartialParams) error {
+	_, err := q.db.ExecContext(ctx, updateCreditCardPartial,
+		arg.ID,
+		arg.Number,
+		arg.Balance,
+		arg.UpdatedAt,
 	)
-	return i, err
+	return err
 }

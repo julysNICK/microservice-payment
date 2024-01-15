@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	"service_auth/creditService"
 	db "service_auth/db/sqlc"
 	"service_auth/pb"
 	"service_auth/util/config"
@@ -9,6 +10,7 @@ import (
 
 type Server struct {
 	pb.UnimplementedAuthServiceServer
+	creditService.UnimplementedCreditServiceServer
 	config config.Config
 	store  db.Store
 	token  token.Maker

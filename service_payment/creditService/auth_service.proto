@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package creditService;
+
+
+option go_package = "/creditService";
+
+
+message GetCardByUserIDRequest {
+    string user_id = 1;
+}
+
+
+message GetCardByUserIDResponse {
+    repeated Card cards = 1;
+}
+
+message Card {
+    string id = 1;
+    string user_id = 2;
+    string number = 3;
+    string balance = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+message UpdateCardBalanceRequest {
+    string id = 1;
+    string balance = 2;
+}
+
+message UpdateCardBalanceResponse {
+    string id = 1;
+    string user_id = 2;
+    string number = 3;
+    string balance = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+service CreditService {
+    rpc GetCardByUserID(GetCardByUserIDRequest) returns (GetCardByUserIDResponse) {}
+
+    rpc UpdateCardBalance(UpdateCardBalanceRequest) returns (UpdateCardBalanceResponse) {}
+}

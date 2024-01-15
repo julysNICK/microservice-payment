@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net"
 	db "service_payment/db/sqlc"
 	"service_payment/gapi"
@@ -18,6 +19,9 @@ type Config struct {
 }
 
 func runGrpcServer(config config.Config, store db.Store) {
+
+	fmt.Println("starting grpc server...")
+
 	server := gapi.NewServer(config, store)
 
 	grpcServer := grpc.NewServer()
@@ -29,13 +33,13 @@ func runGrpcServer(config config.Config, store db.Store) {
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 
 	if err != nil {
-		panic(err)
+		fmt.Println("failed to listen: ", err)
 	}
 
 	errServer := grpcServer.Serve(listener)
 
 	if errServer != nil {
-		panic(errServer)
+		fmt.Println("failed to serve: ", err)
 	}
 
 }

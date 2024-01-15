@@ -32,9 +32,14 @@ proto:
 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
 	proto/*.proto
 
+protoCard:
+	protoc --proto_path=creditService --go_out=creditService --go_opt=paths=source_relative \
+	--go-grpc_out=creditService --go-grpc_opt=paths=source_relative \
+	creditService/*.proto
+
 sqlcgen:
 	sqlc generate
 
 
 
-.PHONY: proto postgres createdbpos clearforup network sqlcgen clearnetwork clearall createall initserver
+.PHONY: proto postgres createdbpos clearforup network sqlcgen clearnetwork clearall createall initserver protoCard

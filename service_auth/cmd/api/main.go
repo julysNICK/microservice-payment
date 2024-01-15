@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net"
+	"service_auth/creditService"
 	db "service_auth/db/sqlc"
 	"service_auth/gapi"
 	"service_auth/pb"
@@ -32,6 +33,8 @@ func runGrpcServer(config config.Config, store db.Store, token token.Maker) {
 	grpcServer := grpc.NewServer()
 
 	pb.RegisterAuthServiceServer(grpcServer, server)
+
+	creditService.RegisterCreditServiceServer(grpcServer, server)
 
 	reflection.Register(grpcServer)
 
